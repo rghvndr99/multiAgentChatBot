@@ -39,3 +39,20 @@ The response is:
 ```
 
 The browser keeps the chat history and includes it in each request, so the agent has conversational context. The OpenAI key remains only in the Express process.
+
+## Testing
+
+Run the deterministic backend test suite with:
+
+```bash
+npm test
+```
+
+Run it with a coverage report using:
+
+```bash
+npm run test:coverage
+```
+
+The expected multi-agent behavior is defined in
+[`tests/contracts/graph-invariants.md`](tests/contracts/graph-invariants.md).
