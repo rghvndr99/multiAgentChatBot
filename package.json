@@ -1,0 +1,40 @@
+{
+  "name": "chatbot",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "dev": "concurrently -n web,api -c cyan,magenta \"npm:dev:web\" \"npm:dev:server\"",
+    "dev:web": "next dev",
+    "dev:server": "node --watch server.js",
+    "build": "next build",
+    "start": "concurrently -n web,api -c cyan,magenta \"next start\" \"node server.js\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@langchain/core": "^1.2.4",
+    "@langchain/langgraph": "^1.4.8",
+    "@langchain/openai": "^1.5.5",
+    "@langchain/textsplitters": "^1.0.1",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "next": "^16.2.12",
+    "pdf-parse": "^2.4.5",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^4.1.10",
+    "concurrently": "^10.0.4",
+    "vitest": "^4.1.10"
+  }
+}
