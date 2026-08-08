@@ -6,6 +6,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createAgentTrace } from "./backend/agents/index.js";
 import { graph } from "./backend/graph/index.js";
+import { requireText } from "./backend/utils/content-to-text.js";
 
 // Always load .env beside this file, even when Node is launched elsewhere.
 const projectDirectory = dirname(fileURLToPath(import.meta.url));
@@ -17,16 +18,6 @@ const webOrigin = process.env.WEB_ORIGIN ?? "http://localhost:3000";
 
 app.use(cors({ origin: webOrigin }));
 app.use(express.json({ limit: "100kb" }));
-
-function contentToText(content) {
-  if (typeof content === "string") return content;
-  if (!Array.isArray(content)) return String(content ?? "");
-
-  return content
-    .filter((part) => part.type === "text")
-    .map((part) => part.text)
-    .join("\n");
-}
 
 app.get("/api/health", (_request, response) => {
   response.json({ ok: true });
@@ -73,7 +64,7 @@ app.post("/api/chat", async (request, response) => {
         metadata: { requestId },
       },
     );
-    const reply = contentToText(result.finalResponse);
+    const reply = requireText(result.finalResponse, "Support graph");
     const toolSequence = trace.getToolSequence();
 
     console.log(

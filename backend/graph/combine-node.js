@@ -1,17 +1,11 @@
 import { getOpenAIModel } from "../llm.js";
+import { contentToText, requireText } from "../utils/content-to-text.js";
 
-function contentToText(content) {
-  if (typeof content === "string") return content;
-  if (!Array.isArray(content)) return String(content ?? "");
-
-  return content
-    .filter((part) => part.type === "text")
-    .map((part) => part.text)
-    .join("\n");
-}
-
-export async function combineNode(state) {
-  const responses = state.responses.map(contentToText).filter(Boolean);
+export async function combineNode(state, config) {
+  const responses = state.responses
+    .map(contentToText)
+    .map((response) => response.trim())
+    .filter(Boolean);
 
   if (responses.length === 0) {
     throw new Error("No specialist agent produced a response.");
@@ -23,7 +17,9 @@ export async function combineNode(state) {
 
   const llm = getOpenAIModel();
   const prompt = `Combine the following specialist responses into one concise, coherent customer-support answer. Do not mention the routing process or specialist agents.\n\n${responses.join("\n\n")}`;
-  const response = await llm.invoke(prompt);
+  const response = await llm.invoke(prompt, config);
 
-  return { finalResponse: contentToText(response.content) };
+  return {
+    finalResponse: requireText(response.content, "Response combiner"),
+  };
 }

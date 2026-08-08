@@ -56,7 +56,7 @@ invariant has a stable ID so tests can refer to the rule they protect.
 - **FAIL-04 — Bounded execution:** Cancellation, timeout, and recursion configuration
   are propagated so an invocation cannot run indefinitely.
 
-## Planned test mapping
+## Test mapping
 
 | Test suite | Invariants |
 | --- | --- |
@@ -69,7 +69,11 @@ invariant has a stable ID so tests can refer to the rule they protect.
 | `tool-permissions.test.js` | TOOL-01 |
 | `tools.test.js` | TOOL-02, TOOL-03 |
 | `graph-failures.test.js` | TOOL-03, FAIL-02 through FAIL-04 |
+| `conversation-state.test.js` | STATE-02 |
+| `combine-node.test.js` | EXEC-04, EXEC-05, FAIL-03 |
+| `agent-trace.test.js` | Failure and tool-call observability |
+| `routing-boundaries.test.js` | Adversarial enforcement of ROUTE-03 through ROUTE-05 |
 
 An invariant is considered protected only when its mapped deterministic test exists
-and passes. Live-model evaluations will later measure routing and tool-selection
+and passes. The opt-in live-model evaluations measure routing and tool-selection
 quality; they do not replace these deterministic guarantees.

@@ -1,12 +1,4 @@
 import { paymentAgent } from "../agents/index.js";
+import { createSpecialistNode } from "./specialist-node.js";
 
-export async function paymentNode(state, config) {
-  const result = await paymentAgent.getAgent().invoke(
-    { messages: state.messages },
-    config,
-  );
-
-  return {
-    responses: [result.messages.at(-1).content],
-  };
-}
+export const paymentNode = createSpecialistNode(paymentAgent, "payment");

@@ -7,8 +7,8 @@ const calculator = tool(
     name: "calculator",
     description: "A simple calculator that adds two numbers.",
     schema: z.object({
-      a: z.number().describe("The first number to add."),
-      b: z.number().describe("The second number to add."),
+      a: z.number().finite().describe("The first number to add."),
+      b: z.number().finite().describe("The second number to add."),
     }),
   },
 );

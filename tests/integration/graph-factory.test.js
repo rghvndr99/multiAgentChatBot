@@ -17,6 +17,7 @@ describe("createSupportGraph", () => {
     expect(dependencies.routeRequest).toHaveBeenCalledWith(
       "Show me a phone",
       expect.any(Object),
+      [{ role: "user", content: "Show me a phone" }],
     );
     expect(dependencies.productNode).toHaveBeenCalledOnce();
     expect(dependencies.orderNode).not.toHaveBeenCalled();

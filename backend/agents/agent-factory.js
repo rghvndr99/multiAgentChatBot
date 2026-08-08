@@ -11,13 +11,14 @@ function defineAgent({ name, prompt, tools }) {
   }
 
   let instance;
+  const assignedTools = Object.freeze([...tools]);
 
   function getAgent() {
     if (!instance) {
       instance = createReactAgent({
         llm: getOpenAIModel(),
         name,
-        tools,
+        tools: assignedTools,
         prompt,
       });
     }
@@ -25,7 +26,7 @@ function defineAgent({ name, prompt, tools }) {
     return instance;
   }
 
-  return Object.freeze({ getAgent });
+  return Object.freeze({ getAgent, name, tools: assignedTools });
 }
 
 export { defineAgent };

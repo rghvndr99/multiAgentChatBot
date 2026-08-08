@@ -10,8 +10,13 @@ const payment = tool(
     name: "payment",
     description: "Process a payment with a specified amount and currency.",
     schema: z.object({
-      amount: z.number().describe("The amount to be paid."),
-      currency: z.string().describe("The currency of the payment."),
+      amount: z.number().finite().positive().describe("The amount to be paid."),
+      currency: z
+        .string()
+        .trim()
+        .length(3)
+        .transform((value) => value.toUpperCase())
+        .describe("The three-letter currency code for the payment."),
     }),
   },
 );

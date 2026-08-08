@@ -13,7 +13,11 @@ const invoice = tool(
     name: "get_invoice",
     description: "Retrieve information about an invoice.",
     schema: z.object({
-      invoiceNumber: z.string().describe("The number of the invoice."),
+      invoiceNumber: z
+        .string()
+        .trim()
+        .min(1)
+        .describe("The number of the invoice."),
     }),
   },
 );

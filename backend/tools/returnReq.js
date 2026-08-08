@@ -10,8 +10,12 @@ const returnReq = tool(
     name: "request_return",
     description: "Submit a return request for an order.",
     schema: z.object({
-      orderId: z.string().describe("The ID of the order for which to request a return."),
-      reason: z.string().describe("The reason for the return."),
+      orderId: z
+        .string()
+        .trim()
+        .min(1)
+        .describe("The ID of the order for which to request a return."),
+      reason: z.string().trim().min(1).describe("The reason for the return."),
     }),
   },
 );

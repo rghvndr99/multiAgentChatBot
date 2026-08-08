@@ -28,7 +28,7 @@ export function createSupportGraph(dependencies = {}) {
   } = dependencies;
 
   const supervisorNode = (state, config) =>
-    routeRequest(state.userMessage, config);
+    routeRequest(state.userMessage, config, state.messages);
 
   return new StateGraph(GraphState)
     .addNode("supervisor", supervisorNode)

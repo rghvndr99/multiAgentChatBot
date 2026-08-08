@@ -4,12 +4,7 @@ import { productNode } from "./productNode.js";
 import { orderNode } from "./order-node.js";
 import { paymentNode } from "./payment-node.js";
 import { combineNode } from "./combine-node.js";
-
-const unsupportedNode = () => ({
-  responses: [
-    "I can only help with product, order, payment, refund, invoice, return, and cancellation questions.",
-  ],
-});
+import { unsupportedNode } from "./unsupported-node.js";
 
 export const graph = createSupportGraph({
   routeRequest,

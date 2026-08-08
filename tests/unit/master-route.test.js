@@ -33,4 +33,24 @@ describe("routeRequest", () => {
       config,
     );
   });
+
+  it("includes conversation history for contextual follow-up routing", async () => {
+    const messages = [
+      { role: "user", content: "I need help with an order." },
+      { role: "assistant", content: "What is the order ID?" },
+      { role: "user", content: "It is ORD-123." },
+    ];
+    mocks.invoke.mockResolvedValue({
+      content: '{"agents":["order"]}',
+    });
+
+    await routeRequest("It is ORD-123.", {}, messages);
+
+    expect(mocks.invoke).toHaveBeenCalledWith(
+      expect.stringMatching(
+        /I need help with an order[\s\S]*What is the order ID[\s\S]*It is ORD-123/,
+      ),
+      {},
+    );
+  });
 });

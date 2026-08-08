@@ -7,7 +7,7 @@ const product = tool(
     name: "get_product",
     description: "Retrieve information about a product.",
     schema: z.object({
-      name: z.string().describe("The name of the product."),
+      name: z.string().trim().min(1).describe("The name of the product."),
     }),
   },
 );

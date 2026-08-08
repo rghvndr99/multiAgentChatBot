@@ -1,12 +1,4 @@
 import { productAgent } from "../agents/index.js";
+import { createSpecialistNode } from "./specialist-node.js";
 
-export async function productNode(state, config) {
-  const result = await productAgent.getAgent().invoke(
-    { messages: state.messages },
-    config,
-  );
-
-  return {
-    responses: [result.messages.at(-1).content],
-  };
-}
+export const productNode = createSpecialistNode(productAgent, "product");

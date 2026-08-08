@@ -12,8 +12,14 @@
     "build": "next build",
     "start": "concurrently -n web,api -c cyan,magenta \"next start\" \"node server.js\"",
     "test": "vitest run",
+    "test:unit": "vitest run tests/unit tests/adversarial",
+    "test:integration": "vitest run tests/integration",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "test:eval:routing": "cross-env RUN_LIVE_EVALS=true vitest run tests/evals/live-routing.test.js",
+    "test:eval:tools": "cross-env RUN_LIVE_TOOL_EVALS=true vitest run tests/evals/live-tool-selection.test.js",
+    "test:eval:graph": "cross-env RUN_LIVE_GRAPH_EVALS=true vitest run tests/evals/live-graph.test.js",
+    "test:eval": "npm run test:eval:routing && npm run test:eval:tools && npm run test:eval:graph"
   },
   "keywords": [],
   "author": "",
@@ -22,12 +28,10 @@
     "@langchain/core": "^1.2.4",
     "@langchain/langgraph": "^1.4.8",
     "@langchain/openai": "^1.5.5",
-    "@langchain/textsplitters": "^1.0.1",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "next": "^16.2.12",
-    "pdf-parse": "^2.4.5",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "zod": "^4.4.3"
@@ -35,6 +39,7 @@
   "devDependencies": {
     "@vitest/coverage-v8": "^4.1.10",
     "concurrently": "^10.0.4",
+    "cross-env": "^10.1.0",
     "vitest": "^4.1.10"
   }
 }

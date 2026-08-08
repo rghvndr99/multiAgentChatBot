@@ -1,7 +1,17 @@
 import { getOpenAIModel } from "../llm.js";
 import { parseRoutes } from "./route-parser.js";
 
-export async function routeRequest(userMessage, config) {
+function formatConversation(messages) {
+  if (!Array.isArray(messages) || messages.length === 0) {
+    return "(no conversation history)";
+  }
+
+  return messages
+    .map((message) => `${message.role}: ${message.content}`)
+    .join("\n");
+}
+
+export async function routeRequest(userMessage, config, messages = []) {
   const llm = getOpenAIModel();
   const prompt = `
 You are a routing agent.
@@ -56,8 +66,15 @@ User: I want to know the weather forecast for tomorrow.
 Output:
 {"agents":["none"]}
 
-User Request:
+Conversation History:
+<conversation>
+${formatConversation(messages)}
+</conversation>
+
+Latest User Request:
+<user_request>
 ${userMessage}
+</user_request>
 `;
 
   const response = await llm.invoke(prompt, config);

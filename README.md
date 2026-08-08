@@ -56,3 +56,5 @@ npm run test:coverage
 
 The expected multi-agent behavior is defined in
 [`tests/contracts/graph-invariants.md`](tests/contracts/graph-invariants.md).
+The deterministic and live-model test tiers are explained in
+[`tests/README.md`](tests/README.md).

@@ -1,12 +1,4 @@
 import { orderAgent } from "../agents/index.js";
+import { createSpecialistNode } from "./specialist-node.js";
 
-export async function orderNode(state, config) {
-  const result = await orderAgent.getAgent().invoke(
-    { messages: state.messages },
-    config,
-  );
-
-  return {
-    responses: [result.messages.at(-1).content],
-  };
-}
+export const orderNode = createSpecialistNode(orderAgent, "order");
