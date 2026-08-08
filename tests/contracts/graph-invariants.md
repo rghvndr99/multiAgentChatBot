@@ -60,7 +60,8 @@ invariant has a stable ID so tests can refer to the rule they protect.
 
 | Test suite | Invariants |
 | --- | --- |
-| `router.test.js` | ROUTE-02 through ROUTE-05, FAIL-01 |
+| `route-parser.test.js` | ROUTE-02 through ROUTE-05, FAIL-01 |
+| `master-route.test.js` | STATE-03, FAIL-04 |
 | `graph-routing.test.js` | ROUTE-01, ROUTE-06, EXEC-01, EXEC-04, EXEC-06 |
 | `parallel-routing.test.js` | EXEC-02 through EXEC-05 |
 | `state-isolation.test.js` | STATE-01 |

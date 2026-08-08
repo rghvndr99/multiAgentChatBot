@@ -1,8 +1,7 @@
 import { getOpenAIModel } from "../llm.js";
+import { parseRoutes } from "./route-parser.js";
 
-const validAgents = new Set(["product", "order", "payment", "none"]);
-
-export async function routeRequest(userMessage) {
+export async function routeRequest(userMessage, config) {
   const llm = getOpenAIModel();
   const prompt = `
 You are a routing agent.
@@ -32,6 +31,8 @@ Rules:
 - Never explain your decision.
 - If multiple agents are needed, return all of them.
 - Return at least one agent. If uncertain, choose the closest matching agent.
+- If no specialist is relevant, return only none.
+- Never combine none with another agent.
 
 Examples:
 
@@ -51,8 +52,6 @@ User: I want to return my order and know when I will receive my refund.
 Output:
 {"agents":["order","payment"]}
 
-if none of the agents are relevent, return the clear meessage that you do not have relevant agent to handle the request.
-
 User: I want to know the weather forecast for tomorrow.
 Output:
 {"agents":["none"]}
@@ -61,23 +60,7 @@ User Request:
 ${userMessage}
 `;
 
-  const response = await llm.invoke(prompt);
+  const response = await llm.invoke(prompt, config);
 
-  try {
-    const routes = JSON.parse(response.content).agents;
-
-    if (
-      !Array.isArray(routes) ||
-      routes.length === 0 ||
-      routes.some((agent) => !validAgents.has(agent))
-    ) {
-      throw new Error("The agents list is missing or invalid.");
-    }
-
-    return { routes: [...new Set(routes)] };
-  } catch (error) {
-    throw new Error(`Invalid routing response: ${response.content}`, {
-      cause: error,
-    });
-  }
+  return parseRoutes(response.content);
 }
