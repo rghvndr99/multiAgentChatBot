@@ -1,23 +1,11 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { createSupportGraph } from "../../backend/graph/create-support-graph.js";
-
-function createFakeDependencies(route = "product") {
-  return {
-    routeRequest: vi.fn(async () => ({ routes: [route] })),
-    productNode: vi.fn(async () => ({ responses: ["product response"] })),
-    orderNode: vi.fn(async () => ({ responses: ["order response"] })),
-    paymentNode: vi.fn(async () => ({ responses: ["payment response"] })),
-    unsupportedNode: vi.fn(async () => ({ responses: ["unsupported response"] })),
-    combineNode: vi.fn(async (state) => ({
-      finalResponse: state.responses.join(" | "),
-    })),
-  };
-}
+import { createFakeGraphDependencies } from "../fixtures/fake-graph-dependencies.js";
 
 describe("createSupportGraph", () => {
   it("executes injected dependencies without using production agents", async () => {
-    const dependencies = createFakeDependencies();
+    const { dependencies } = createFakeGraphDependencies();
     const graph = createSupportGraph(dependencies);
 
     const result = await graph.invoke({
@@ -39,7 +27,7 @@ describe("createSupportGraph", () => {
   });
 
   it("reports a missing dependency before graph compilation", () => {
-    const dependencies = createFakeDependencies();
+    const { dependencies } = createFakeGraphDependencies();
     delete dependencies.combineNode;
 
     expect(() => createSupportGraph(dependencies)).toThrow(
