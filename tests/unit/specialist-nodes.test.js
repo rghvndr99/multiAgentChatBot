@@ -35,6 +35,41 @@ describe("createSpecialistNode", () => {
     });
   });
 
+  it("uses a direct handler without initializing the agent", async () => {
+    const getAgent = vi.fn();
+    const directHandler = vi.fn(async () => "direct response");
+    const node = createSpecialistNode(
+      { getAgent },
+      "order",
+      { directHandler },
+    );
+
+    await expect(
+      node(
+        {
+          messages: [{ role: "user", content: "Where is ORD-1?" }],
+          userMessage: "Where is ORD-1?",
+        },
+        {},
+      ),
+    ).resolves.toEqual({ responses: ["direct response"] });
+    expect(directHandler).toHaveBeenCalledOnce();
+    expect(getAgent).not.toHaveBeenCalled();
+  });
+
+  it("limits fallback-agent history to the six most recent messages", async () => {
+    const { agent, invoke } = createAgentResult("response");
+    const node = createSpecialistNode(agent, "order");
+    const messages = Array.from({ length: 10 }, (_, index) => ({
+      role: "user",
+      content: `message-${index}`,
+    }));
+
+    await node({ messages }, {});
+
+    expect(invoke.mock.calls[0][0].messages).toEqual(messages.slice(-6));
+  });
+
   it.each([
     ["missing messages", {}, "order requires messages in graph state."],
     [

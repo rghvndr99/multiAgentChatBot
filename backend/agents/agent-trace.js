@@ -22,8 +22,13 @@ function formatTraceValue(value, maxLength = 500) {
 function createAgentTrace(requestId) {
   const toolRuns = new Map();
   const toolSequence = [];
+  let modelCallCount = 0;
 
   const handler = BaseCallbackHandler.fromMethods({
+    handleLLMStart() {
+      modelCallCount += 1;
+    },
+
     handleToolStart(tool, input, runId, _parentRunId, _tags, _metadata, runName) {
       const toolName = runName ?? tool.name ?? tool.id?.at(-1) ?? "unknown_tool";
       const sequenceNumber = toolSequence.length + 1;
@@ -60,6 +65,7 @@ function createAgentTrace(requestId) {
 
   return {
     handler,
+    getModelCallCount: () => modelCallCount,
     getToolSequence: () => [...toolSequence],
   };
 }

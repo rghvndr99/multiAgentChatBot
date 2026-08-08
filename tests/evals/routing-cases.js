@@ -74,6 +74,17 @@ const routingCases = [
     ],
     expectedRoutes: ["payment"],
   },
+  {
+    name: "semantic order phrasing uses the LLM fallback",
+    messages: [
+      {
+        role: "user",
+        content: "Has the thing I purchased been sent out yet?",
+      },
+    ],
+    expectedRoutes: ["order"],
+    expectedSource: "llm",
+  },
 ];
 
 export { routingCases };

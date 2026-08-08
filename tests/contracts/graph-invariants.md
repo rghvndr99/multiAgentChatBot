@@ -13,6 +13,8 @@ invariant has a stable ID so tests can refer to the rule they protect.
 - **ROUTE-05 — Exclusive fallback:** `none` cannot be combined with a specialist
   route.
 - **ROUTE-06 — Selection integrity:** Only selected specialist nodes execute.
+- **ROUTE-07 — Deterministic confidence:** A confidently classified request does
+  not call the routing model.
 
 ## Execution and aggregation
 
@@ -56,6 +58,18 @@ invariant has a stable ID so tests can refer to the rule they protect.
 - **FAIL-04 — Bounded execution:** Cancellation, timeout, and recursion configuration
   are propagated so an invocation cannot run indefinitely.
 
+## Model-call budget
+
+- **COST-01 — Direct execution:** A confidently parsed request with complete tool
+  arguments executes without initializing a specialist model.
+- **COST-02 — Deterministic aggregation:** Combining specialist responses does not
+  call a model.
+- **COST-03 — Bounded context:** Model fallbacks receive at most the six most recent
+  conversation messages.
+- **COST-04 — Cached fallback:** Repeating an identical ambiguous request reuses its
+  successful cached route without another model call.
+- **COST-05 — Observable usage:** Request traces report the model-call count.
+
 ## Test mapping
 
 | Test suite | Invariants |
@@ -73,6 +87,12 @@ invariant has a stable ID so tests can refer to the rule they protect.
 | `combine-node.test.js` | EXEC-04, EXEC-05, FAIL-03 |
 | `agent-trace.test.js` | Failure and tool-call observability |
 | `routing-boundaries.test.js` | Adversarial enforcement of ROUTE-03 through ROUTE-05 |
+| `deterministic-router.test.js` | ROUTE-07 |
+| `direct-dispatch.test.js` | COST-01 |
+| `combine-node.test.js` | COST-02 |
+| `recent-messages.test.js` | COST-03 |
+| `master-route.test.js` | COST-04 |
+| `agent-trace.test.js` | COST-05 |
 
 An invariant is considered protected only when its mapped deterministic test exists
 and passes. The opt-in live-model evaluations measure routing and tool-selection

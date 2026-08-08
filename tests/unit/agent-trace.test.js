@@ -11,6 +11,8 @@ describe("createAgentTrace", () => {
     const log = vi.spyOn(console, "log").mockImplementation(() => {});
     const trace = createAgentTrace("request-1");
 
+    await trace.handler.handleLLMStart({}, [], "model-run-1");
+
     await trace.handler.handleToolStart(
       { name: "get_product" },
       { name: "Pixel 9" },
@@ -22,6 +24,7 @@ describe("createAgentTrace", () => {
     );
 
     expect(trace.getToolSequence()).toEqual(["get_product"]);
+    expect(trace.getModelCallCount()).toBe(1);
     expect(log).toHaveBeenCalledWith(
       expect.stringContaining("[trace:request-1] tool:1:start name=get_product"),
     );

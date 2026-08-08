@@ -7,6 +7,7 @@ export const state = Annotation.Root({
     default: () => [],
     reducer: (_current, next) => next,
   }),
+  routingSource: Annotation(),
   responses: Annotation({
     default: () => [],
     reducer: (current, next) => current.concat(next),

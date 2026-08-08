@@ -27,12 +27,12 @@ explicit environment flags are enabled.
 npm run test:eval:routing
 ```
 
-This command loads `.env` and calls the real model returned by `getOpenAIModel()`.
-Each labelled case sends the complete conversation through the production
-`routeRequest()` prompt and parser. The test compares the selected route set with
-the expected route set. Cases include normal requests, spelling errors,
-multi-agent requests, contextual follow-ups, unsupported requests, and prompt
-injection attempts.
+This command loads `.env` and sends every labelled case through production
+`routeRequest()`. Confident cases must select their route deterministically. A
+deliberately ambiguous semantic case must call the real model returned by
+`getOpenAIModel()`, proving the fallback remains functional. Cases include normal
+requests, spelling errors, multi-agent requests, contextual follow-ups,
+unsupported requests, and prompt-injection attempts.
 
 The live routing test does not accept a merely parseable response: the real route
 selection must match the labelled expectation.
@@ -66,6 +66,12 @@ selection, parallel branches, and the response combiner—run:
 ```bash
 npm run test:eval:graph
 ```
+
+The optimized production graph uses deterministic routing, direct tool dispatch,
+parallel branches, and deterministic response aggregation for confident requests.
+Those cases assert a zero-model-call budget. The routing evaluation also contains
+a deliberately ambiguous semantic case that must use the real LLM fallback, so
+the cost optimization does not remove the escape hatch.
 
 The full-graph evaluation distinguishes required tools from allowed tools and
 enforces a minimum tool-call precision. This keeps unexpected side-effecting tools

@@ -48,6 +48,7 @@ describe("getOpenAIModel", () => {
     expect(first).toBe(second);
     expect(mocks.ChatOpenAI).toHaveBeenCalledOnce();
     expect(mocks.ChatOpenAI).toHaveBeenCalledWith({
+      maxTokens: 256,
       model: "test-model",
       temperature: 0,
     });

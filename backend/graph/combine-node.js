@@ -1,7 +1,6 @@
-import { getOpenAIModel } from "../llm.js";
-import { contentToText, requireText } from "../utils/content-to-text.js";
+import { contentToText } from "../utils/content-to-text.js";
 
-export async function combineNode(state, config) {
+export async function combineNode(state) {
   const responses = state.responses
     .map(contentToText)
     .map((response) => response.trim())
@@ -15,11 +14,7 @@ export async function combineNode(state, config) {
     return { finalResponse: responses[0] };
   }
 
-  const llm = getOpenAIModel();
-  const prompt = `Combine the following specialist responses into one concise, coherent customer-support answer. Do not mention the routing process or specialist agents.\n\n${responses.join("\n\n")}`;
-  const response = await llm.invoke(prompt, config);
-
   return {
-    finalResponse: requireText(response.content, "Response combiner"),
+    finalResponse: responses.map((response) => `- ${response}`).join("\n"),
   };
 }

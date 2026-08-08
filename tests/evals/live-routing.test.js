@@ -10,7 +10,7 @@ const liveDescribe = process.env.RUN_LIVE_EVALS === "true" ? describe : describe
 liveDescribe("live OpenAI routing evaluation", () => {
   it.each(routingCases)(
     "$name",
-    async ({ messages, expectedRoutes }) => {
+    async ({ messages, expectedRoutes, expectedSource = "deterministic" }) => {
       const startedAt = Date.now();
       const latestUserMessage = messages.findLast(
         (message) => message.role === "user",
@@ -21,6 +21,7 @@ liveDescribe("live OpenAI routing evaluation", () => {
         `[live-routing] expected=${expectedRoutes.join(",")} actual=${result.routes.join(",")} latencyMs=${Date.now() - startedAt}`,
       );
       expect([...result.routes].sort()).toEqual([...expectedRoutes].sort());
+      expect(result.routingSource).toBe(expectedSource);
     },
     60_000,
   );

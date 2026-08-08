@@ -1,5 +1,8 @@
 import { getOpenAIModel } from "../llm.js";
+import { getRecentMessages } from "../utils/recent-messages.js";
+import { routeDeterministically } from "./deterministic-router.js";
 import { parseRoutes } from "./route-parser.js";
+import { getCachedRoutes, setCachedRoutes } from "./route-cache.js";
 
 function formatConversation(messages) {
   if (!Array.isArray(messages) || messages.length === 0) {
@@ -12,6 +15,18 @@ function formatConversation(messages) {
 }
 
 export async function routeRequest(userMessage, config, messages = []) {
+  const recentMessages = getRecentMessages(messages);
+  const deterministicResult = routeDeterministically(
+    userMessage,
+    recentMessages,
+  );
+
+  if (deterministicResult) return deterministicResult;
+
+  const cachedResult = getCachedRoutes(userMessage, recentMessages);
+
+  if (cachedResult) return cachedResult;
+
   const llm = getOpenAIModel();
   const prompt = `
 You are a routing agent.
@@ -68,7 +83,7 @@ Output:
 
 Conversation History:
 <conversation>
-${formatConversation(messages)}
+${formatConversation(recentMessages)}
 </conversation>
 
 Latest User Request:
@@ -79,5 +94,8 @@ ${userMessage}
 
   const response = await llm.invoke(prompt, config);
 
-  return parseRoutes(response.content);
+  const result = parseRoutes(response.content);
+  setCachedRoutes(userMessage, recentMessages, result.routes);
+
+  return { ...result, routingSource: "llm" };
 }

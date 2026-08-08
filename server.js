@@ -68,7 +68,7 @@ app.post("/api/chat", async (request, response) => {
     const toolSequence = trace.getToolSequence();
 
     console.log(
-      `[trace:${requestId}] graph:end routes=${result.routes.join(",")} durationMs=${Date.now() - startedAt} tools=${toolSequence.length ? toolSequence.join(" -> ") : "none"}`,
+      `[trace:${requestId}] graph:end routes=${result.routes.join(",")} routingSource=${result.routingSource ?? "unknown"} modelCalls=${trace.getModelCallCount()} durationMs=${Date.now() - startedAt} tools=${toolSequence.length ? toolSequence.join(" -> ") : "none"}`,
     );
 
     return response.json({ reply });

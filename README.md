@@ -6,6 +6,8 @@ A small learning project with:
 - an Express REST API on port `4000`
 - a LangGraph supervisor that routes to product, order, and payment agents
 - sample product, order-status, return, payment, invoice, and calculator tools
+- deterministic routing and direct tool dispatch for confident requests, with an
+  OpenAI fallback for ambiguous language
 
 ## Run it
 
@@ -58,3 +60,8 @@ The expected multi-agent behavior is defined in
 [`tests/contracts/graph-invariants.md`](tests/contracts/graph-invariants.md).
 The deterministic and live-model test tiers are explained in
 [`tests/README.md`](tests/README.md).
+
+Confident product, order, payment, invoice, return, and unsupported requests avoid
+model calls. Ambiguous requests use the model router, successful fallback routes
+are cached by a bounded SHA-256 key, and fallback agents receive only the six most
+recent messages.

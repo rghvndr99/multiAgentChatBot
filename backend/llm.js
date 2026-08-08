@@ -10,6 +10,7 @@ function getOpenAIModel() {
   if (!model) {
     model = new ChatOpenAI({
       model: process.env.OPENAI_MODEL ?? "gpt-4o-mini",
+      maxTokens: 256,
       temperature: 0,
     });
   }

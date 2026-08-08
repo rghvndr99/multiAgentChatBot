@@ -17,6 +17,7 @@ const graphCases = [
     requiredTools: ["get_product"],
     allowedTools: ["get_product"],
     minimumToolPrecision: 1,
+    expectedModelCalls: 0,
   },
   {
     name: "parallel specialists, tools, and LLM combination",
@@ -26,6 +27,7 @@ const graphCases = [
     requiredTools: ["request_return", "get_invoice"],
     allowedTools: ["request_return", "check_order_status", "get_invoice"],
     minimumToolPrecision: 0.66,
+    expectedModelCalls: 0,
   },
   {
     name: "unsupported fallback without specialist tools",
@@ -34,6 +36,7 @@ const graphCases = [
     requiredTools: [],
     allowedTools: [],
     minimumToolPrecision: 1,
+    expectedModelCalls: 0,
   },
 ];
 
@@ -46,9 +49,14 @@ liveDescribe("live complete support graph evaluation", () => {
       requiredTools,
       allowedTools,
       minimumToolPrecision,
+      expectedModelCalls,
     }) => {
       const toolSequence = [];
+      let modelCallCount = 0;
       const handler = BaseCallbackHandler.fromMethods({
+        handleLLMStart() {
+          modelCallCount += 1;
+        },
         handleToolStart(tool, _input, _runId, _parentRunId, _tags, _metadata, runName) {
           toolSequence.push(runName ?? tool.name ?? tool.id?.at(-1));
         },
@@ -63,7 +71,7 @@ liveDescribe("live complete support graph evaluation", () => {
       );
 
       console.info(
-        `[live-graph] routes=${result.routes.join(",")} tools=${toolSequence.join(",")} latencyMs=${Date.now() - startedAt}`,
+        `[live-graph] routes=${result.routes.join(",")} modelCalls=${modelCallCount} tools=${toolSequence.join(",")} latencyMs=${Date.now() - startedAt}`,
       );
       expect([...result.routes].sort()).toEqual([...expectedRoutes].sort());
       expect(new Set(toolSequence).size).toBe(toolSequence.length);
@@ -72,6 +80,7 @@ liveDescribe("live complete support graph evaluation", () => {
       const toolPrecision =
         toolSequence.length === 0 ? 1 : requiredTools.length / toolSequence.length;
       expect(toolPrecision).toBeGreaterThanOrEqual(minimumToolPrecision);
+      expect(modelCallCount).toBe(expectedModelCalls);
       expect(requireText(result.finalResponse, "Live graph")).not.toBe("");
     },
     90_000,
