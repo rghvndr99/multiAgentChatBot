@@ -6,6 +6,10 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createAgentTrace } from "./backend/agents/index.js";
 import { graph } from "./backend/graph/index.js";
+import {
+  createLangSmithRunConfig,
+  isLangSmithTracingEnabled,
+} from "./backend/observability/langsmith.js";
 import { requireText } from "./backend/utils/content-to-text.js";
 
 // Always load .env beside this file, even when Node is launched elsewhere.
@@ -61,7 +65,7 @@ app.post("/api/chat", async (request, response) => {
       },
       {
         callbacks: [trace.handler],
-        metadata: { requestId },
+        ...createLangSmithRunConfig(requestId),
       },
     );
     const reply = requireText(result.finalResponse, "Support graph");
@@ -89,4 +93,7 @@ app.post("/api/chat", async (request, response) => {
 app.listen(port, () => {
   console.log(`Express API listening on http://localhost:${port}`);
   console.log(`OpenAI API key loaded: ${process.env.OPENAI_API_KEY ? "yes" : "no"}`);
+  console.log(
+    `LangSmith tracing: ${isLangSmithTracingEnabled() ? `enabled (project: ${process.env.LANGSMITH_PROJECT ?? "default"})` : "disabled"}`,
+  );
 });
